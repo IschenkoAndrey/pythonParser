@@ -1,5 +1,11 @@
 # pip freeze > requirements.txt
+# python -m pip install -r requirements.txt
+# python -m venv venv
+# venv\Scripts\activate
 from bs4 import BeautifulSoup
+import csv
+import urllib
+import time
 import requests
 import fake_useragent
 import certifi
