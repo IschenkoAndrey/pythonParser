@@ -2,9 +2,11 @@
 from bs4 import BeautifulSoup
 import requests
 import fake_useragent
-import certifi
+import json
+# import certifi
 
-def Get_Company():
+
+def get_company():
     ua = fake_useragent.UserAgent()
 
     #print(certifi.where())
@@ -34,25 +36,55 @@ def Get_Company():
     # for link in links:
     #     print(f'{link.get_text(strip=True)} - {link.get("href")}')
 
-def Get_ListtenderCompany():
+def get_listtendercompany():
+    ua = fake_useragent.UserAgent()
+    #edr = '38855066'
+    #url_listtender = 'https://clarity-project.info/tenders/?tenderer=38855066&tenderer_status=supplier'
+    #url_tender = 'https: //clarity-project.info/tender/48ad84f232614f42b6bfb010282558c1'
+    #i = '38855066'
 
-    url = f"https://clarity-project.info/tenders/?tenderer=38855066&tenderer_status=supplier"
+    req = requests.get('https://clarity-project.info/tenders/?tenderer=38855066&tenderer_status=supplier', headers={"User-Agent": ua.random})
+    # #json_data = json.loads(req.text)
+    # #html_response = json_data["html"]
+    #
 
 
-    req = requests.get(url=url, headers=headers)
-    json_data = json.loads(req.text)
-    html_response = json_data["html"]
+    # with open(f"data/index_{i}.html", "w") as file:
+    #     file.write(req.text)
 
-    with open(f"data/index_{i}.html", "w") as file:
-        file.write(html_response)
+    #with open(f"data/index_{i}.html") as file:
+    #html_file = open(f"data/index_{i}.html", encoding='UTF-8').read()
+    #soup = BeautifulSoup(html_file,'lxml')
+    soup = BeautifulSoup(req.text, 'lxml')
+    soup.find('table', class_='table-wrapper tenders-list one-line').find_all('tr', class_='table-row')
+    return tag.has_attr('class') and not tag.has_attr('id')
 
-    with open(f"data/index_{i}.html") as file:
-        src = file.read()
+    for row in soup.find('table', class_='table-wrapper tenders-list one-line').find_all('tr', class_='table-row'):
+        if row.has_attr('data-id'):
+            id_tender = soup.find('table', class_='table-wrapper tenders-list one-line').find_all('tr', class_='table-row')[1].get("data-id")
 
-    soup = BeautifulSoup(src, "lxml")
+            #заголовок данных soup.find('table', class_='table-wrapper tenders-list one-line').find_all('tr', class_='table-row')[1].find('td', class_='tender-info').find('div', class_='tender-edrs clearfix').find_all({'h4','div'})
+            # данные по тендеру
+            url_tender = f'https: //clarity-project.info/tender/{id_tender}'
+            req_tender = requests.get(url_tender, headers={"User-Agent": ua.random})
+            soup = BeautifulSoup(req_tender.text,"lxml")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def main():
-    # get_data()
-    Get_Company()
+    # Get_Company()
+    get_listtendercompany()
 
 
 if __name__ == '__main__':
