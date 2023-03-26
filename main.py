@@ -48,9 +48,9 @@ def get_listtendercompany():
     # #html_response = json_data["html"]
     #
 
-
-    # with open(f"data/index_{i}.html", "w") as file:
-    #     file.write(req.text)
+    #with open(f"data/index_{i}.html", "w") as file:
+    #
+    #     #     file.write(req.text)
 
     #with open(f"data/index_{i}.html") as file:
     #html_file = open(f"data/index_{i}.html", encoding='UTF-8').read()
@@ -67,7 +67,7 @@ def get_listtendercompany():
             # данные по тендеру
             url_tender = f'https: //clarity-project.info/tender/{id_tender}'
             req_tender = requests.get(url_tender, headers={"User-Agent": ua.random})
-            soup = BeautifulSoup(req_tender.text,"lxml")
+            soup = BeautifulSoup(req_tender.text,'lxml')
 
 
 
@@ -79,12 +79,37 @@ def get_listtendercompany():
 
 
 
+def get_listtendercompanyFile():
+    ua = fake_useragent.UserAgent()
+    edr = '38855066'
+    url_listtender = 'https://clarity-project.info/tenders/?tenderer=38855066&tenderer_status=supplier'
+    # url_tender = 'https: //clarity-project.info/tender/48ad84f232614f42b6bfb010282558c1'
+    # i = '38855066'
 
+    req = requests.get('https://clarity-project.info/tenders/?tenderer=38855066&tenderer_status=supplier',
+                       headers={"User-Agent": ua.random})
+    with open(f"data/index_{edr}.html", "w",encoding="utf-8") as file:
+        file.write(req.text)
+    file.close()
+    soup = BeautifulSoup(req.text, 'html.parser')
+
+
+
+    for row in soup.find('table', class_='table-wrapper tenders-list one-line').find_all('tr', class_='table-row'):
+        if row.has_attr('data-id'):
+            id_tender = row.get("data-id")
+            url_tender = f'https://clarity-project.info/tender/{id_tender}'
+            req = requests.get(url_tender,
+                               headers={"User-Agent": ua.random})
+            with open(f"data/tender_{id_tender}.html", "w",encoding="utf-8") as file:
+                file.write(req.text)
+            file.close()
 
 
 def main():
     # Get_Company()
-    get_listtendercompany()
+    #get_listtendercompany()
+    get_listtendercompanyFile()
 
 
 if __name__ == '__main__':
